@@ -1,56 +1,139 @@
-import org.junit.*;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 public class CalculatorTesting
 {
     private Calculator calc;
-    @Before
+
+    @BeforeEach
     public void BeforeAction()
     {
         calc = new Calculator();
     }
-    @After
+    @AfterEach
     public void AfterCation()
     {
         calc = null;
     }
 
-    @Test
-    public void TestAddition()
+    static Stream<Arguments> SumSources()
     {
-        Assert.assertEquals(12, calc.Addition(3,9),0.0000000001 );
-        Assert.assertEquals(-122, calc.Addition(90,-212),0.0000000001 );
-        Assert.assertEquals(12.4, calc.Addition(7.2,5.2),0.0000000001 );
-        Assert.assertEquals(74.015, calc.Addition(59.2,14.815),0.0000000001 );
-        Assert.assertEquals(-3.2, calc.Addition(-3.32,0.12),0.0000000001 );
+        return Stream.of(
+                Arguments.arguments(4,3,7),
+                Arguments.arguments(3,9,12),
+                Arguments.arguments(90.0,-212,-122),
+                Arguments.arguments(7.2,5.2,12.4),
+                Arguments.arguments(59.2,14.815,74.015),
+                Arguments.arguments(-3.32,0.12,-3.2)
+        );
+    }
+    static Stream<Arguments> DiffSources()
+    {
+        return Stream.of(
+                Arguments.arguments(4,-1.3,5.3),
+                Arguments.arguments(19.1,6.5,12.6),
+                Arguments.arguments(1.242,1.374,-0.132),
+                Arguments.arguments(41,-18, 59),
+                Arguments.arguments(145.3,158.43,-13.13)
+        );
+    }
+    static Stream<Arguments> MultyplySources()
+    {
+        return Stream.of(
+                Arguments.arguments(2.1,2,4.2),
+                Arguments.arguments(-4,4.0,-16),
+                Arguments.arguments(25.25,0.27,6.8175),
+                Arguments.arguments(0,15.234,0),
+                Arguments.arguments(12,1,12),
+                Arguments.arguments(1795,0.95,1705.25),
+                Arguments.arguments(26,0,0)
+                );
+    }
+    static Stream<Arguments> DivisionSourses()
+    {
+        return Stream.of(
+                Arguments.arguments(15.5,5,3.1),
+                Arguments.arguments(49.7,7.0,7.0),//negative
+                Arguments.arguments(9,9.0,1),
+                Arguments.arguments(4,15.234,0),//negative
+                Arguments.arguments(75,25,3.0),
+                Arguments.arguments(-64,8.0,-8)
+        );
     }
 
-    @Test
-    public void TestDifference()
+    static Stream<Arguments> SqrtSourses()
     {
-        Assert.assertEquals(5.3,calc.Difference(4,-1.3),0.0000000001 );
-        Assert.assertEquals(12.6,calc.Difference(19.1,6.5),0.0000000001 );
-        Assert.assertEquals(-0.132,calc.Difference(1.242,1.374),0.0000000001 );
-        Assert.assertEquals(59,calc.Difference(41,-18),0.0000000001 );
-        Assert.assertEquals(-13.13,calc.Difference(145.3,158.43),0.0000000001 );
-    }
-    @Test
-    public void TestMultiply()
-    {
-        Assert.assertEquals(4.2, calc.Multiply(2.1,2),0.0000000001 );
-        Assert.assertEquals(-16, calc.Multiply(-4,4.0),0.0000000001 );
-        Assert.assertEquals(6.8175, calc.Multiply(25.25,0.27),0.0000000001 );
-        Assert.assertEquals(0, calc.Multiply(0,15.234),0.0000000001 );
-        Assert.assertEquals(12, calc.Multiply(12,1),0.0000000001 );
-        Assert.assertEquals(1705.25, calc.Multiply(1795,0.95),0.0000000001 );
+        return Stream.of(
+                Arguments.arguments(81.0,9),
+                Arguments.arguments(16,4.1),//negative test
+                Arguments.arguments(4.0,2.0),
+                Arguments.arguments(30.25,5.5),
+                Arguments.arguments(-144.0,12),//error
+                Arguments.arguments(0,0)
+        );
     }
 
-
-    @Test(timeout = 200)
-    @Ignore
-    public  void TestDivision()
+    static Stream<Arguments> SquareSourses()
     {
-        Assert.assertEquals(5.2, calc.Division(15.6, 3),0.0000000001);
-        Assert.assertEquals(12,calc.Division(6,0.5), 0.0000000001);
+        return Stream.of(
+                Arguments.arguments(9,81.0),
+                Arguments.arguments(4, 16.0),
+                Arguments.arguments(2.4,5.76),
+                Arguments.arguments(-14, 196),
+                Arguments.arguments(0,0.1), //negative test
+                Arguments.arguments(5.5, 30.25)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("SumSources")
+    public void TestAddition(double a, double b, double expRes)
+    {
+          assertEquals(expRes, calc.Addition(a,b),0.0000000001 );
+    }
+
+    @ParameterizedTest
+    @MethodSource("DiffSources")
+    public void TestDifference(double a, double b, double expRes)
+    {
+        assertEquals(expRes, calc.Difference(a,b),0.0000000001 );
+    }
+
+    @ParameterizedTest
+    @MethodSource("MultyplySources")
+    public void TestMultiply(double a, double b, double expRes)
+    {
+        assertEquals(expRes, calc.Multiply(a,b),0.0000000001 );
+    }
+
+    @ParameterizedTest
+    @MethodSource("DivisionSourses")
+    @Disabled
+    @Timeout(100)
+    public  void TestDivision(double a, double b, double expRes)
+    {
+        assertEquals(expRes, calc.Division(a, b),0.0000000001);
+    }
+
+    @ParameterizedTest
+    @MethodSource("SqrtSourses")
+    public  void TestSqrt(double a, double expRes)
+    {
+        assertEquals(expRes, calc.Sqrt(a),0.0000000001);
+    }
+
+    @ParameterizedTest
+    @MethodSource("SquareSourses")
+    public  void TestSquare(double a, double expRes)
+    {
+        assertEquals(expRes, calc.Square(a),0.0000000001);
     }
 }
