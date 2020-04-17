@@ -15,17 +15,14 @@ public class Calculator {
         return  a * b;
     }
 
-    public  double Division (double a, double b)
+    public  int Division (int a, int b)
     {
-        if (b != 0) return a / b; else
-        throw new IllegalArgumentException();
+        return a / b;
     }
 
     public  double Sqrt (double a)
     {
-        if(a >= 0)
             return Math.sqrt(a);
-        else throw new IllegalArgumentException();
     }
 
     public double Square(double a)

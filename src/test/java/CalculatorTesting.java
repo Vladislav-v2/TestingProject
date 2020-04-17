@@ -1,12 +1,11 @@
+import org.junit.Assert;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
-
-
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.Console;
 import java.util.stream.Stream;
 
 public class CalculatorTesting
@@ -57,31 +56,34 @@ public class CalculatorTesting
                 Arguments.arguments(26,0,0)
                 );
     }
-    static Stream<Arguments> DivisionSourses()
+    static Stream<Arguments> DivisionSources()
     {
         return Stream.of(
-                Arguments.arguments(15.5,5,3.1),
-                Arguments.arguments(49.7,7.0,7.0),//negative
-                Arguments.arguments(9,9.0,1),
-                Arguments.arguments(4,15.234,0),//negative
-                Arguments.arguments(75,25,3.0),
-                Arguments.arguments(-64,8.0,-8)
+//                Arguments.arguments(15.5,5,3.1),
+//                Arguments.arguments(49.7,7.0,7.0),//negative
+//                Arguments.arguments(9,9.0,1),
+//                Arguments.arguments(4,15.234,0),//negative
+//                Arguments.arguments(75,25,3.0),
+                Arguments.arguments(-64 ,0, 1), //negative
+                Arguments.arguments(60 ,12, 5), //negative
+                Arguments.arguments(15 ,4, 5),
+                Arguments.arguments(-18 ,-9, 2),
+                Arguments.arguments(448 ,14, 32),
+                Arguments.arguments(4 ,0, 0)
         );
     }
-
-    static Stream<Arguments> SqrtSourses()
+    static Stream<Arguments> SqrtSources()
     {
         return Stream.of(
                 Arguments.arguments(81.0,9),
                 Arguments.arguments(16,4.1),//negative test
                 Arguments.arguments(4.0,2.0),
                 Arguments.arguments(30.25,5.5),
-                Arguments.arguments(-144.0,12),//error
-                Arguments.arguments(0,0)
+                Arguments.arguments(144,12.00001),
+                Arguments.arguments(0.0,0)
         );
     }
-
-    static Stream<Arguments> SquareSourses()
+    static Stream<Arguments> SquareSources()
     {
         return Stream.of(
                 Arguments.arguments(9,81.0),
@@ -97,6 +99,7 @@ public class CalculatorTesting
     @MethodSource("SumSources")
     public void TestAddition(double a, double b, double expRes)
     {
+          Assert.fail();//set failed test
           assertEquals(expRes, calc.Addition(a,b),0.0000000001 );
     }
 
@@ -115,23 +118,28 @@ public class CalculatorTesting
     }
 
     @ParameterizedTest
-    @MethodSource("DivisionSourses")
-    @Disabled
-    @Timeout(100)
-    public  void TestDivision(double a, double b, double expRes)
+    @MethodSource("DivisionSources")
+    public  void TestDivision(int a, int b, int expRes)
     {
-        assertEquals(expRes, calc.Division(a, b),0.0000000001);
+        try {
+            assertEquals(expRes, calc.Division(a, b));
+        }catch (ArithmeticException ex)
+        {
+            Assert.fail("Exception - test failed");
+        }
     }
 
     @ParameterizedTest
-    @MethodSource("SqrtSourses")
+    @MethodSource("SqrtSources")
+    @Disabled
+    @Timeout(100)
     public  void TestSqrt(double a, double expRes)
     {
         assertEquals(expRes, calc.Sqrt(a),0.0000000001);
     }
 
     @ParameterizedTest
-    @MethodSource("SquareSourses")
+    @MethodSource("SquareSources")
     public  void TestSquare(double a, double expRes)
     {
         assertEquals(expRes, calc.Square(a),0.0000000001);
